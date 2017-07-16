@@ -1,0 +1,107 @@
+// Copyright 2015, Google Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//     * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "sr.hospital.gen";
+option java_outer_classname = "Hospital";
+option objc_class_prefix = "HLW";
+
+package hospital;
+
+message OperationStatus {
+    OperationCode code = 1;
+}
+
+enum OperationCode {
+	OK = 0;
+	FAIL = 1;
+}
+
+message Doctor {
+    string id = 1;
+}
+
+message Technician {
+    string id = 1;
+}
+
+message Patient {
+    string id = 1;
+    Name name = 2;
+    Contact contact = 3;
+    repeated Examination listOfExaminations = 4;
+}
+
+message Contact {
+    string telephone = 1;
+    string address = 2;
+    string email = 3;
+}
+
+message Examination {
+    int64 date = 1;
+    string doctorsID = 2;
+    repeated Parameter listOfParameters = 3;
+}
+
+message Parameter {
+    string name = 1;
+    int32 value = 2;
+    string unitName = 3;
+    Norm norm = 4;
+}
+
+message Norm {
+    int32 minValue = 1;
+    int32 maxValue = 2;
+}
+
+message Name {
+    string firstname = 1;
+    string lastname = 2;
+}
+
+message AddingPatientsExamination {
+    string id = 1;
+    Examination examination = 2;
+}
+
+message PatientID {
+    string id = 1;
+}
+
+service HospitalService {
+    rpc GetPatientExaminations(PatientID) returns (stream Examination) {}
+    rpc AddPatientExamination(AddingPatientsExamination) returns (OperationStatus) {}
+    rpc AddPatientToDatabase(Patient) returns (OperationStatus) {}
+    rpc GetSimilarExaminations(Examination) returns (stream Examination) {}
+}
+
